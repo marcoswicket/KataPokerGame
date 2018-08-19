@@ -1,4 +1,7 @@
 KataPokerHands/bin
 KataPokerHands/obj
 KataPokerHands/Properties
-
+KataPokerHandsTests/obj
+KataPokerHandsTests/bin
+KataPokerHands/Properties
+.vs

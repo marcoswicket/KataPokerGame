@@ -5,7 +5,7 @@ using System.Text;
 
 namespace KataPokerHands
 {
-	class Game
+	public class Game
 	{
 		enum Score
 		{
@@ -24,18 +24,23 @@ namespace KataPokerHands
 		private const string WhiteWin = "White wins.";
 		private const string Tie = "Tie.";
 
-		private readonly Hand _handWhite, _handBlack;
+		private Hand _handWhite, _handBlack;
 		private Score? _whiteScore, _blackScore;
 
-		public Game(string cards)
+		public Game()
 		{
-			// First player is black second is white
-			string handBlack = cards.Substring(0, 14);
-			string handWhite = cards.Substring(15, 14);
 
-			_handWhite = new Hand(handWhite);
-			_handBlack = new Hand(handBlack);
 		}
+
+		//public Game(string cards)
+		//{
+		//	// First player is black second is white
+		//	string handBlack = cards.Substring(0, 14);
+		//	string handWhite = cards.Substring(15, 14);
+
+		//	_handWhite = new Hand(handWhite);
+		//	_handBlack = new Hand(handBlack);
+		//}
 
 		private Score? FullHouse(Hand _hand)
 		{
@@ -160,49 +165,46 @@ namespace KataPokerHands
 					HighCard(_hand);
 		}
 
-		public string RunGame()
+		public string RunGame(string cards)
 		{
-			_whiteScore = GetScore(_handWhite);
-			_blackScore = GetScore(_handBlack);
-			if (_whiteScore > _blackScore)
-				return WhiteWin;
-			if (_blackScore > _whiteScore)
-				return BlackWin;
-
-			if (_whiteScore == _blackScore)
+			try
 			{
-				for (int cardIndex = 4; cardIndex > 0; cardIndex--)
+				// First player is black second is white
+				string handBlack = cards.Substring(0, 14);
+				string handWhite = cards.Substring(15, 14);
+
+				_handWhite = new Hand(handWhite);
+				_handBlack = new Hand(handBlack);
+
+				_whiteScore = GetScore(_handWhite);
+				_blackScore = GetScore(_handBlack);
+				if (_whiteScore > _blackScore)
+					return WhiteWin;
+				if (_blackScore > _whiteScore)
+					return BlackWin;
+
+				if (_whiteScore == _blackScore)
 				{
-					var blackRank = _handBlack._cards[cardIndex].RankParsing();
-					var whiteRank = _handWhite._cards[cardIndex].RankParsing();
-					if (blackRank > whiteRank)
+					for (int cardIndex = 4; cardIndex > 0; cardIndex--)
 					{
-						return BlackWin;
-					}
-					else if (blackRank < whiteRank)
-					{
-						return WhiteWin;
+						var blackRank = _handBlack._cards[cardIndex].RankParsing();
+						var whiteRank = _handWhite._cards[cardIndex].RankParsing();
+						if (blackRank > whiteRank)
+						{
+							return BlackWin;
+						}
+						else if (blackRank < whiteRank)
+						{
+							return WhiteWin;
+						}
 					}
 				}
+				return Tie;
+			} catch (Exception err)
+			{
+				throw (err);
 			}
-			return Tie;
-		}
 
-		static void Main(string[] args)
-		{ 
-			// In case of argument play just uncomment this line
-			//if (args.Length < 1)
-			//{
-			//	Console.Write("It needs the card hands as a string");
-			//	return;
-			//} 
-			// string input = args[0];
-			// if (input.Length < 29 ) ... string too small ...
-			string input = "2D 3C 4S 5D 6C 3D 4C 5S 6D 7C";
-
-			Game _game = new Game(input);
-			Console.WriteLine(_game.RunGame());
-			Console.WriteLine(Score.FourOfAKind > Score.HighCard);
 		}
 	}
 }

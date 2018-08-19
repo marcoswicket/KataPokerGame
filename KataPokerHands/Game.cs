@@ -182,6 +182,64 @@ namespace KataPokerHands
 					HighCard(_hand);
 		}
 
+		private string OnePairWinCondition(Hand _handBlack, Hand _handWhite)
+		{
+			var _whiteCards = _handWhite._cards.Reverse();
+			var _blackCards = _handBlack._cards.Reverse();
+			List<int> _remainingCardsBlack = new List<int>();
+			List<int> _remainingCardsWhite = new List<int>();
+			foreach (var card in _blackCards.Zip(_whiteCards, Tuple.Create))
+			{
+				if(card.Item1.Rank != _handBlack.rank)
+				{
+					_remainingCardsBlack.Add(card.Item1.RankParsing());
+				}
+				if(card.Item2.Rank != _handBlack.rank)
+				{
+					_remainingCardsWhite.Add(card.Item2.RankParsing());
+				}
+			}
+			foreach (var card in _remainingCardsBlack.Zip(_remainingCardsWhite, Tuple.Create))
+			{
+				if(card.Item1 > card.Item2)
+					return BlackWin;
+				if (card.Item2 > card.Item1)
+					return WhiteWin;
+			}
+			return Tie;
+		}
+
+		private string TwoPairWinCondition(Hand _handBlack, Hand _handWhite)
+		{
+			// See who has the biggest pair
+			_handWhite.group = _handWhite.group.Reverse();
+			_handBlack.group = _handBlack.group.Reverse();
+			foreach (var group in _handBlack.group.Zip(_handWhite.group, Tuple.Create))
+			{
+				if (group.Item1 > group.Item2)
+					return BlackWin;
+				if (group.Item2 > group.Item1)
+					return WhiteWin;
+			}
+			// If both pairs are equal, search for the biggest single card
+			int? remainingCardBlack = null;
+			int? remainingCardWhite = null;
+			foreach (var card in _handBlack._cards.Zip(_handWhite._cards, Tuple.Create))
+			{
+				if (!_handBlack.group.Contains(card.Item1.Rank))
+				{
+					remainingCardBlack = card.Item1.RankParsing();
+				}
+				if (!_handWhite.group.Contains(card.Item2.Rank))
+				{
+					remainingCardWhite = card.Item2.RankParsing();
+				}
+			}
+			if (remainingCardBlack > remainingCardWhite) return BlackWin;
+			if (remainingCardWhite > remainingCardBlack) return WhiteWin;
+			return Tie;
+		}
+
 		// Should be refatored out since its a copy of a card func
 		private int? ConvertRank(char? rank)
 		{
@@ -216,8 +274,7 @@ namespace KataPokerHands
 				if (_whiteScore == _blackScore)
 				{
 					// If its one of these
-					if (_whiteScore == Score.OnePair	  || _whiteScore == Score.TwoPair 
-					 || _whiteScore == Score.ThreeOfAKind || _whiteScore == Score.FourOfAKind)
+					if (_whiteScore == Score.ThreeOfAKind || _whiteScore == Score.FourOfAKind)
 					{
 						var blackRank = ConvertRank(_handBlack.rank);
 						var whiteRank = ConvertRank(_handWhite.rank);
@@ -228,6 +285,14 @@ namespace KataPokerHands
 							return WhiteWin;
 						if (whiteRank == blackRank)
 							return Tie;
+					}
+					else if(_whiteScore == Score.OnePair)
+					{
+						return OnePairWinCondition(_handBlack, _handWhite);
+					}
+					else if (_whiteScore == Score.TwoPair)
+					{
+						return TwoPairWinCondition(_handBlack, _handWhite);
 					}
 					// Other than that just search for the biggest card in the hand and it will be the judge
 					for (int cardIndex = 4; cardIndex > 0; cardIndex--)
@@ -241,7 +306,8 @@ namespace KataPokerHands
 					}
 				}
 				return Tie;
-			} catch (Exception err)
+			}
+			catch (Exception err)
 			{
 				throw (err);
 			}

@@ -10,7 +10,7 @@ namespace KataPokerHands
 		{
 			Game _game = new Game();
 
-			string result = _game.RunGame("2H 2D 5S 7D 8C 3H 3D 7S 8D 9C");
+			string result = _game.RunGame("3H 3D 5S 6D 8C 3H 3D 5S 6D 8D");
 
 			Console.WriteLine(result);
 		}

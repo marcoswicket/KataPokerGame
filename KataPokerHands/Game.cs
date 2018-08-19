@@ -27,6 +27,8 @@ namespace KataPokerHands
 		private Hand _handWhite, _handBlack;
 		private Score? _whiteScore, _blackScore;
 
+		private int _whiteRank, _blackRank;
+
 		public Game()
 		{
 
@@ -111,14 +113,19 @@ namespace KataPokerHands
 
 		private Score? OnePair(Hand _hand)
 		{
-			return FindCardsEqualRank(_hand, 2, Score.OnePair);
+			_hand.rank = FindCardsEqualRank(_hand, 2);
+			if (_hand.rank != null)
+			{
+				return Score.OnePair;
+			}
+			return null;
 		}
 
 		private Score? TwoPairs(Hand _hand)
 		{
-			var group = FindGroupsOfSize(_hand, 2);
+			_hand.group = FindGroupsOfSize(_hand, 2);
 
-			if (group.Count() == 2)
+			if (_hand.group.Count() == 2)
 			{
 				return Score.TwoPair;
 			}
@@ -128,20 +135,30 @@ namespace KataPokerHands
 
 		private Score? ThreeOfAKind(Hand _hand)
 		{
-			return FindCardsEqualRank(_hand, 3, Score.ThreeOfAKind);
+			_hand.rank = FindCardsEqualRank(_hand, 3);
+			if (_hand.rank != null)
+			{
+				return Score.ThreeOfAKind;
+			}
+			return null;
 		}
 
 		private Score? FourOfAKind(Hand _hand)
 		{
-			return FindCardsEqualRank(_hand, 4, Score.FourOfAKind);
+			_hand.rank = FindCardsEqualRank(_hand, 4);
+			if (_hand.rank != null)
+			{
+				return Score.FourOfAKind;
+			}
+			return null;
 		}
 
-		private Score? FindCardsEqualRank(Hand _hand, int size, Score score)
+		private char? FindCardsEqualRank(Hand _hand, int size)
 		{
 			var groups = FindGroupsOfSize(_hand, size);
 			if (groups.Count() == 1)
 			{
-				return score;
+				return groups.Single();
 			}
 
 			return null;
@@ -165,6 +182,17 @@ namespace KataPokerHands
 					HighCard(_hand);
 		}
 
+		private int? ConvertRank(char? rank)
+		{
+			if (rank == null) return null; // it will probably never reach here
+			if (rank.Equals('T')) return 10;
+			if (rank.Equals('J')) return 11;
+			if (rank.Equals('Q')) return 12;
+			if (rank.Equals('K')) return 13;
+			if (rank.Equals('A')) return 14;
+			return Convert.ToInt32(rank.ToString());
+		}
+
 		public string RunGame(string cards)
 		{
 			try
@@ -185,18 +213,25 @@ namespace KataPokerHands
 
 				if (_whiteScore == _blackScore)
 				{
+					if (_whiteScore == Score.OnePair	  || _whiteScore == Score.TwoPair 
+					 || _whiteScore == Score.ThreeOfAKind || _whiteScore == Score.FourOfAKind)
+					{
+						var blackRank = ConvertRank(_handBlack.rank);
+						var whiteRank = ConvertRank(_handWhite.rank);
+
+						if (blackRank > whiteRank)
+							return BlackWin;
+						if (whiteRank > blackRank)
+							return BlackWin;
+					}
 					for (int cardIndex = 4; cardIndex > 0; cardIndex--)
 					{
 						var blackRank = _handBlack._cards[cardIndex].RankParsing();
 						var whiteRank = _handWhite._cards[cardIndex].RankParsing();
 						if (blackRank > whiteRank)
-						{
 							return BlackWin;
-						}
-						else if (blackRank < whiteRank)
-						{
+						if (blackRank < whiteRank)
 							return WhiteWin;
-						}
 					}
 				}
 				return Tie;

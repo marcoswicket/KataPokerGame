@@ -7,7 +7,8 @@ namespace KataPokerHands
 	class Hand
 	{
 		public readonly Card[] _cards;
-
+		public char? rank;
+		public IEnumerable<char> group;
 		public Hand(string cards)
 		{
 			var aux = cards.Split(' ');

@@ -1,4 +1,6 @@
-﻿<div style="font-size: 16px; color: rgb(33, 33, 33); font-family: wf_segoe-ui_normal, &quot;Segoe UI&quot;, &quot;Segoe WP&quot;, Tahoma, Arial, sans-serif, serif, EmojiFont;">
+<h1><b>Kata Poker Game with Two Players (Black and White)</b></h1>
+
+<div style="font-size: 16px; color: rgb(33, 33, 33); font-family: wf_segoe-ui_normal, &quot;Segoe UI&quot;, &quot;Segoe WP&quot;, Tahoma, Arial, sans-serif, serif, EmojiFont;">
 <div style="margin: 0px;"><font size="2" face="Calibri,sans-serif"><span style="font-size: 11pt;">&nbsp;</span></font></div>
 </div>
 <div style="font-size: 16px; color: rgb(33, 33, 33); font-family: wf_segoe-ui_normal, &quot;Segoe UI&quot;, &quot;Segoe WP&quot;, Tahoma, Arial, sans-serif, serif, EmojiFont;">

@@ -182,6 +182,7 @@ namespace KataPokerHands
 					HighCard(_hand);
 		}
 
+		// Should be refatored out since its a copy of a card func
 		private int? ConvertRank(char? rank)
 		{
 			if (rank == null) return null; // it will probably never reach here
@@ -211,19 +212,24 @@ namespace KataPokerHands
 				if (_blackScore > _whiteScore)
 					return BlackWin;
 
+				// If the scoring type is the same
 				if (_whiteScore == _blackScore)
 				{
+					// If its one of these
 					if (_whiteScore == Score.OnePair	  || _whiteScore == Score.TwoPair 
 					 || _whiteScore == Score.ThreeOfAKind || _whiteScore == Score.FourOfAKind)
 					{
 						var blackRank = ConvertRank(_handBlack.rank);
 						var whiteRank = ConvertRank(_handWhite.rank);
-
+						// See which one has the highest ranking matching card
 						if (blackRank > whiteRank)
 							return BlackWin;
 						if (whiteRank > blackRank)
-							return BlackWin;
+							return WhiteWin;
+						if (whiteRank == blackRank)
+							return Tie;
 					}
+					// Other than that just search for the biggest card in the hand and it will be the judge
 					for (int cardIndex = 4; cardIndex > 0; cardIndex--)
 					{
 						var blackRank = _handBlack._cards[cardIndex].RankParsing();
